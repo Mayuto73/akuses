@@ -1,585 +1,1378 @@
 <!DOCTYPE html>
 <html lang="ja">
+
 <head>
+
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+
+<meta name="viewport"
+      content="width=device-width,
+               initial-scale=1.0,
+               maximum-scale=1.0,
+               user-scalable=no">
+
 <title>SECURE ACCESS</title>
+
+
 <style>
+
 /* =========================================
    基本設定
 ========================================= */
-* { box-sizing: border-box; }
-html, body {
-    margin: 0; padding: 0;
-    width: 100%; height: 100%;
+
+* {
+    box-sizing: border-box;
+}
+
+html,
+body {
+
+    margin: 0;
+    padding: 0;
+
+    width: 100%;
+    height: 100%;
+
     background: #030303;
+
     color: #00ff66;
-    font-family: "Courier New", monospace;
+
+    font-family:
+        "Courier New",
+        monospace;
+
     overflow: hidden;
 }
+
+
 body {
+
     display: flex;
+
     justify-content: center;
+
     align-items: center;
-    transition: background 0.1s, filter 0.3s;
-    filter: brightness(1);
-}
-#app {
-    width: 100%;
-    max-width: 600px;
-    height: 100%;
-    padding: 20px;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    position: relative;
-    z-index: 2;
+
+    transition:
+        background 0.1s;
 }
 
-/* マトリックス背景キャンバス */
-#matrixCanvas {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    z-index: 0;
-    opacity: 0.2;
-    pointer-events: none;
+
+/* =========================================
+   メイン
+========================================= */
+
+#app {
+
+    width: 100%;
+
+    max-width: 600px;
+
+    height: 100%;
+
+    padding: 25px;
+
+    display: flex;
+
+    justify-content: center;
+
+    align-items: center;
 }
+
+
+/* =========================================
+   画面
+========================================= */
 
 .screen {
+
     width: 100%;
+
     text-align: center;
+
     display: none;
-    position: relative;
-    z-index: 2;
-}
-.screen.active {
-    display: block;
-    animation: fadeIn 0.4s ease;
 }
 
-/* 警告ポップアップ */
-.warning-popup {
-    position: fixed;
-    top: 50%; left: 50%;
-    transform: translate(-50%, -50%);
-    color: #ff3030;
-    font-size: clamp(32px, 10vw, 60px);
-    font-weight: bold;
-    text-shadow: 0 0 30px #ff0000;
-    pointer-events: none;
-    z-index: 10;
-    animation: popFade 1.2s ease forwards;
-    opacity: 0;
+
+.screen.active {
+
+    display: block;
+
+    animation:
+        fadeIn 0.4s ease;
 }
-@keyframes popFade {
-    0% { opacity: 0; transform: translate(-50%, -50%) scale(0.5); }
-    20% { opacity: 1; transform: translate(-50%, -50%) scale(1.2); }
-    60% { opacity: 1; transform: translate(-50%, -50%) scale(1); }
-    100% { opacity: 0; transform: translate(-50%, -50%) scale(1) translateY(-30px); }
-}
+
+
+/* =========================================
+   警告
+========================================= */
 
 .warning {
+
     color: #ff3030;
-    font-size: clamp(24px, 7vw, 42px);
+
+    font-size:
+        clamp(
+            24px,
+            7vw,
+            42px
+        );
+
     font-weight: bold;
+
     letter-spacing: 2px;
+
     margin-bottom: 25px;
-    animation: blink 1s infinite;
+
+    animation:
+        blink 1s infinite;
 }
+
+
+/* =========================================
+   見出し
+========================================= */
+
 h1 {
-    font-size: clamp(21px, 6vw, 34px);
+
+    font-size:
+        clamp(
+            21px,
+            6vw,
+            34px
+        );
+
     line-height: 1.6;
 }
+
+
+/* =========================================
+   通常テキスト
+========================================= */
+
 p {
+
     color: #b8ffc9;
+
     font-size: 14px;
+
     line-height: 1.8;
 }
+
+
+/* =========================================
+   ターミナル
+========================================= */
+
 .terminal {
+
     margin-top: 25px;
+
     padding: 18px;
+
     text-align: left;
+
     background: #001207;
+
     border: 1px solid #00ff66;
-    box-shadow: 0 0 20px rgba(0,255,102,0.15);
+
+    box-shadow:
+        0 0 20px
+        rgba(
+            0,
+            255,
+            102,
+            0.15
+        );
 }
+
+
 .terminal p {
+
     margin: 6px 0;
+
     font-size: 12px;
 }
+
+
+/* =========================================
+   プログレスバー
+========================================= */
+
 .progress-container {
+
     width: 100%;
+
     height: 17px;
-    border: 1px solid #00ff66;
+
+    border:
+        1px solid #00ff66;
+
     padding: 3px;
+
     margin-top: 20px;
 }
+
+
 #progress {
+
     height: 100%;
+
     width: 0%;
+
     background: #00ff66;
-    transition: width 0.08s ease;
-}
-.countdown {
-    font-size: clamp(70px, 22vw, 130px);
-    font-weight: bold;
-    letter-spacing: 4px;
-    margin: 10px 0;
-    color: #00ff66;
-    text-shadow: 0 0 10px #00ff66, 0 0 30px #00ff66;
-    font-variant-numeric: tabular-nums;
-}
-.file {
-    margin: 15px 0;
-    padding: 15px;
-    border: 1px solid #555;
-    background: #101010;
-    color: #ddd;
-    text-align: left;
-    font-size: 12px;
-}
-.file::before {
-    content: "▣ ";
-    color: #00ff66;
-}
-.final {
-    color: white;
-    font-family: Arial, sans-serif;
-}
-.final h1 {
-    color: #00ff66;
-    text-shadow: 0 0 20px #00ff66;
-}
-.big {
-    font-size: clamp(28px, 8vw, 48px);
-    margin: 25px 0;
-}
-.secret {
-    margin-top: 30px;
-    color: #777;
-    font-size: 11px;
-}
-.red { color: #ff3030; }
-.glitch { animation: glitch 0.12s infinite; }
-.flash-red { animation: redFlash 0.15s 5; }
-.flash-crash { animation: redFlash 0.08s 10; }
 
-@keyframes fadeIn {
-    from { opacity: 0; transform: translateY(10px); }
-    to { opacity: 1; transform: translateY(0); }
-}
-@keyframes blink {
-    0%,45% { opacity: 1; }
-    50%,100% { opacity: 0.25; }
-}
-@keyframes glitch {
-    0% { transform: translate(0); }
-    25% { transform: translate(-3px, 2px); }
-    50% { transform: translate(3px, -2px); }
-    75% { transform: translate(-2px, -1px); }
-    100% { transform: translate(0); }
-}
-@keyframes redFlash {
-    0%,100% { background: #030303; }
-    50% { background: #550000; }
-}
-#backGuard {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: rgba(0,0,0,0.85);
-    color: #ff3030;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    font-size: 28px;
-    z-index: 999;
-    text-align: center;
-    padding: 30px;
-    backdrop-filter: blur(6px);
-}
-#backGuard.show { display: flex; animation: fadeIn 0.2s ease; }
-#crashScreen {
-    position: fixed;
-    top: 0; left: 0;
-    width: 100%; height: 100%;
-    background: #000;
-    display: none;
-    justify-content: center;
-    align-items: center;
-    z-index: 100;
-    color: #ff3030;
-    font-size: clamp(32px, 10vw, 60px);
-    font-weight: bold;
-    flex-direction: column;
-    text-shadow: 0 0 40px #ff0000;
-}
-#crashScreen.show { display: flex; animation: fadeIn 0.1s ease; }
-#crashScreen .sub {
-    font-size: 16px;
-    color: #ff6666;
-    margin-top: 10px;
-}
-</style>
-</head>
-<body>
-
-<canvas id="matrixCanvas"></canvas>
-
-<div id="backGuard">
-    ⛔ 戻ることはできません。<br>
-    <span style="font-size:16px;color:#888;">セッションは固定されています。</span>
-</div>
-
-<div id="crashScreen">
-    ⚡ SYSTEM CRASH<br>
-    <span class="sub">再起動中...</span>
-</div>
-
-<div id="app">
-
-<!-- SCREEN 1 (プログレスバー) -->
-<section id="screen1" class="screen active">
-    <div class="warning">⚠ ACCESS DETECTED</div>
-    <h1>極秘区域へのアクセスが<br>検知されました。</h1>
-    <p>未承認端末からのアクセスを確認。</p>
-    <div class="terminal">
-        <p>> CONNECTION ESTABLISHED</p>
-        <p>> SECURITY CHECK...</p>
-        <p>> ANALYZING DEVICE...</p>
-        <p>> PLEASE WAIT...</p>
-        <div class="progress-container">
-            <div id="progress"></div>
-        </div>
-    </div>
-</section>
-
-<!-- SCREEN 2 (カウントダウン) -->
-<section id="screen2" class="screen">
-    <div class="warning">⚠ WARNING</div>
-    <h1>機密区域へのアクセスを<br>確認しています。</h1>
-    <div class="terminal">
-        <p>> USER : UNKNOWN</p>
-        <p>> DEVICE : DETECTED</p>
-        <p>> ACCESS : UNAUTHORIZED</p>
-        <p id="locationText">> LOCATION : SEARCHING...</p>
-        <p id="batteryText">> BATTERY : --%</p>
-        <p id="signalText">> SIGNAL : STRONG</p>
-    </div>
-    <p>セキュリティ確認まで</p>
-    <div class="countdown" id="countdown">10.00</div>
-</section>
-
-<!-- SCREEN 3 -->
-<section id="screen3" class="screen">
-    <div class="warning">INTRUDER DETECTED</div>
-    <h1 class="glitch">⚠ ACCESS VIOLATION</h1>
-    <div class="terminal">
-        <p>> SECURITY SYSTEM ACTIVATED</p>
-        <p>> UNAUTHORIZED USER DETECTED</p>
-        <p class="red">> TRACE INITIATED</p>
-    </div>
-</section>
-
-<!-- SCREEN 4 -->
-<section id="screen4" class="screen">
-    <h1>🔓 ACCESS GRANTED</h1>
-    <p>SECURITY LEVEL : TOP SECRET</p>
-    <div class="file">SECRET_FILE_001.dat</div>
-    <div class="file">CLASSIFIED_DOCUMENT.txt</div>
-    <div class="file">DO_NOT_OPEN.zip</div>
-    <p>機密ファイルを復号しています...</p>
-</section>
-
-<!-- SCREEN 5 (オチ) -->
-<section id="screen5" class="screen">
-    <div class="final">
-        <h1>MISSION COMPLETE</h1>
-        <div class="big">何もありません。</div>
-        <p>あなたは極秘区域への<br>アクセスに成功しました。</p>
-        <p>……が、</p>
-        <p>本当に何もありません。</p>
-        <div class="secret">このサイトは位置情報などの<br>個人情報を取得していません。</div>
-    </div>
-</section>
-
-<!-- 2回目以降用 -->
-<section id="secondVisit" class="screen">
-    <div class="warning">YOU AGAIN?</div>
-    <h1>……また来ましたね。</h1>
-    <div class="terminal">
-        <p>> PREVIOUS ACCESS : DETECTED</p>
-        <p>> ACCESS COUNT : <span id="visitCount">2</span></p>
-        <p>> LAST VISIT : <span id="lastVisit">--</span></p>
-        <p>> USER STATUS : PERSISTENT</p>
-    </div>
-    <p>前回のアクセス記録が残っています。</p>
-    <div class="big">今度は少し違います。</div>
-</section>
-
-</div>
-
-<script>
-/* =========================================
-   共通ユーティリティ
-========================================= */
-const $ = id => document.getElementById(id);
-function show(id) {
-    document.querySelectorAll(".screen").forEach(el => el.classList.remove("active"));
-    $(id).classList.add("active");
-}
-function vibrate(pattern) {
-    if ("vibrate" in navigator) navigator.vibrate(pattern);
-}
-function beep(freq = 800, dur = 120) {
-    try {
-        const ctx = new (window.AudioContext || window.webkitAudioContext)();
-        const osc = ctx.createOscillator();
-        const gain = ctx.createGain();
-        osc.type = 'square';
-        osc.frequency.value = freq;
-        gain.gain.setValueAtTime(0.15, ctx.currentTime);
-        gain.gain.exponentialRampToValueAtTime(0.001, ctx.currentTime + dur/1000);
-        osc.connect(gain);
-        gain.connect(ctx.destination);
-        osc.start();
-        osc.stop(ctx.currentTime + dur/1000);
-    } catch(e) {}
+    transition:
+        width 0.15s;
 }
 
-/* =========================================
-   ローカルストレージ（エラーハンドリング付き）
-========================================= */
-function getStorage(key, def) {
-    try {
-        const val = localStorage.getItem(key);
-        return val !== null ? val : def;
-    } catch(e) { return def; }
-}
-function setStorage(key, val) {
-    try { localStorage.setItem(key, val); } catch(e) {}
-}
-
-let visitCount = Number(getStorage('secretVisitCount', '0')) || 0;
-visitCount++;
-const prevDate = getStorage('secretLastVisit', '--');
-setStorage('secretVisitCount', String(visitCount));
-setStorage('secretLastVisit', new Date().toLocaleString('ja-JP'));
-
-/* =========================================
-   戻るボタンガード
-========================================= */
-history.pushState(null, null, location.href);
-window.addEventListener('popstate', function(e) {
-    document.getElementById('backGuard').classList.add('show');
-    beep(200, 300);
-    vibrate([100, 50, 100]);
-    setTimeout(() => {
-        document.getElementById('backGuard').classList.remove('show');
-        history.pushState(null, null, location.href);
-    }, 2000);
-});
-
-/* =========================================
-   マトリックス背景 (Canvas)
-========================================= */
-const canvas = document.getElementById('matrixCanvas');
-const ctx = canvas.getContext('2d');
-let w, h, columns, drops, matrixChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
-function resizeMatrix() {
-    w = canvas.width = window.innerWidth;
-    h = canvas.height = window.innerHeight;
-    columns = Math.floor(w / 18);
-    drops = Array(columns).fill(1);
-}
-resizeMatrix();
-window.addEventListener('resize', resizeMatrix);
-function drawMatrix() {
-    ctx.fillStyle = 'rgba(3, 3, 3, 0.05)';
-    ctx.fillRect(0, 0, w, h);
-    ctx.fillStyle = '#00ff66';
-    ctx.font = '16px monospace';
-    for (let i = 0; i < drops.length; i++) {
-        const text = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-        ctx.fillText(text, i * 18, drops[i] * 18);
-        if (drops[i] * 18 > h && Math.random() > 0.975) drops[i] = 0;
-        drops[i]++;
-    }
-    requestAnimationFrame(drawMatrix);
-}
-drawMatrix();
-
-/* =========================================
-   プログレスバー（必ず動く！）
-========================================= */
-function runProgressBar(onComplete) {
-    let progress = 0;
-    const bar = $('#progress');
-    // ★ 2回目以降は 50% からスタート（すぐ終わる）
-    if (visitCount >= 2) progress = 50;
-    bar.style.width = progress + '%';
-
-    // 速度：初回はゆっくり(2〜9)、2回目以降は速い(15〜30)
-    const isFirst = visitCount === 1;
-    const intervalTime = isFirst ? 120 : 60;
-
-    const timer = setInterval(() => {
-        const maxAdd = isFirst ? 9 : 30;
-        const minAdd = isFirst ? 2 : 15;
-        progress += Math.floor(Math.random() * (maxAdd - minAdd + 1)) + minAdd;
-        if (progress >= 100) {
-            progress = 100;
-            bar.style.width = progress + '%';
-            clearInterval(timer);
-            vibrate([100, 50, 100]);
-            beep(600, 100);
-            if (onComplete) onComplete();
-        } else {
-            bar.style.width = progress + '%';
-        }
-    }, intervalTime);
-}
-
-/* =========================================
-   フェイク情報
-========================================= */
-function fakeInfo() {
-    const batt = $('#batteryText');
-    const sig = $('#signalText');
-    let battVal = 87;
-    setInterval(() => {
-        battVal += (Math.random() - 0.5) * 6;
-        battVal = Math.min(100, Math.max(10, Math.round(battVal)));
-        batt.textContent = `> BATTERY : ${battVal}%`;
-        const sigLevel = ['WEAK', 'MODERATE', 'STRONG', 'EXCELLENT'][Math.floor(Math.random()*4)];
-        sig.textContent = `> SIGNAL : ${sigLevel}`;
-    }, 2000);
-}
-
-function fakeLocation() {
-    const text = $('#locationText');
-    const messages = [
-        "> LOCATION : SEARCHING...",
-        "> LOCATION : DETECTED",
-        "> LOCATION : ENCRYPTED",
-        "> LOCATION : CLASSIFIED"
-    ];
-    let i = 0;
-    const timer = setInterval(() => {
-        text.textContent = messages[i];
-        i++;
-        if (i >= messages.length) clearInterval(timer);
-    }, 700);
-}
 
 /* =========================================
    カウントダウン
 ========================================= */
+
+.countdown {
+
+    font-size:
+        clamp(
+            70px,
+            22vw,
+            130px
+        );
+
+    font-weight: bold;
+
+    letter-spacing: 4px;
+
+    margin: 10px 0;
+
+    color: #00ff66;
+
+    text-shadow:
+
+        0 0 10px
+        #00ff66,
+
+        0 0 30px
+        #00ff66;
+
+    font-variant-numeric:
+        tabular-nums;
+}
+
+
+/* =========================================
+   ファイル
+========================================= */
+
+.file {
+
+    margin: 15px 0;
+
+    padding: 15px;
+
+    border:
+        1px solid #555;
+
+    background: #101010;
+
+    color: #ddd;
+
+    text-align: left;
+
+    font-size: 12px;
+}
+
+
+.file::before {
+
+    content: "▣ ";
+
+    color: #00ff66;
+}
+
+
+/* =========================================
+   最終画面
+========================================= */
+
+.final {
+
+    color: white;
+
+    font-family:
+        Arial,
+        sans-serif;
+}
+
+
+.final h1 {
+
+    color: #00ff66;
+
+    text-shadow:
+        0 0 20px #00ff66;
+}
+
+
+.big {
+
+    font-size:
+        clamp(
+            28px,
+            8vw,
+            48px
+        );
+
+    margin: 25px 0;
+}
+
+
+.secret {
+
+    margin-top: 30px;
+
+    color: #777;
+
+    font-size: 11px;
+}
+
+
+/* =========================================
+   赤文字
+========================================= */
+
+.red {
+
+    color: #ff3030;
+}
+
+
+/* =========================================
+   グリッチ
+========================================= */
+
+.glitch {
+
+    animation:
+        glitch 0.12s infinite;
+}
+
+
+/* =========================================
+   赤フラッシュ
+========================================= */
+
+.flash-red {
+
+    animation:
+        redFlash 0.15s 5;
+}
+
+
+/* =========================================
+   アニメーション
+========================================= */
+
+@keyframes fadeIn {
+
+    from {
+
+        opacity: 0;
+
+        transform:
+            translateY(10px);
+    }
+
+    to {
+
+        opacity: 1;
+
+        transform:
+            translateY(0);
+    }
+}
+
+
+@keyframes blink {
+
+    0%,
+    45% {
+
+        opacity: 1;
+    }
+
+    50%,
+    100% {
+
+        opacity: 0.25;
+    }
+}
+
+
+@keyframes glitch {
+
+    0% {
+
+        transform:
+            translate(0);
+    }
+
+    25% {
+
+        transform:
+            translate(
+                -3px,
+                2px
+            );
+    }
+
+    50% {
+
+        transform:
+            translate(
+                3px,
+                -2px
+            );
+    }
+
+    75% {
+
+        transform:
+            translate(
+                -2px,
+                -1px
+            );
+    }
+
+    100% {
+
+        transform:
+            translate(0);
+    }
+}
+
+
+@keyframes redFlash {
+
+    0%,
+    100% {
+
+        background:
+            #030303;
+    }
+
+    50% {
+
+        background:
+            #550000;
+    }
+}
+
+</style>
+
+</head>
+
+
+<body>
+
+
+<div id="app">
+
+
+<!-- =====================================
+     初回：SCREEN 1
+===================================== -->
+
+<section
+    id="screen1"
+    class="screen active"
+>
+
+    <div class="warning">
+
+        ⚠ ACCESS DETECTED
+
+    </div>
+
+
+    <h1>
+
+        極秘区域へのアクセスが<br>
+
+        検知されました。
+
+    </h1>
+
+
+    <p>
+
+        未承認端末からのアクセスを確認。
+
+    </p>
+
+
+    <div class="terminal">
+
+        <p>
+            > CONNECTION ESTABLISHED
+        </p>
+
+        <p>
+            > SECURITY CHECK...
+        </p>
+
+        <p>
+            > ANALYZING DEVICE...
+        </p>
+
+        <p>
+            > PLEASE WAIT...
+        </p>
+
+
+        <div class="progress-container">
+
+            <div id="progress"></div>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================
+     SCREEN 2
+===================================== -->
+
+<section
+    id="screen2"
+    class="screen"
+>
+
+    <div class="warning">
+
+        ⚠ WARNING
+
+    </div>
+
+
+    <h1>
+
+        機密区域へのアクセスを<br>
+
+        確認しています。
+
+    </h1>
+
+
+    <div class="terminal">
+
+        <p>
+            > USER : UNKNOWN
+        </p>
+
+        <p>
+            > DEVICE : DETECTED
+        </p>
+
+        <p>
+            > ACCESS : UNAUTHORIZED
+        </p>
+
+        <p id="locationText">
+
+            > LOCATION : SEARCHING...
+
+        </p>
+
+    </div>
+
+
+    <p>
+
+        セキュリティ確認まで
+
+    </p>
+
+
+    <div
+        class="countdown"
+        id="countdown"
+    >
+
+        10.00
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================
+     SCREEN 3
+===================================== -->
+
+<section
+    id="screen3"
+    class="screen"
+>
+
+    <div class="warning">
+
+        INTRUDER DETECTED
+
+    </div>
+
+
+    <h1 class="glitch">
+
+        ⚠ ACCESS VIOLATION
+
+    </h1>
+
+
+    <div class="terminal">
+
+        <p>
+            > SECURITY SYSTEM ACTIVATED
+        </p>
+
+        <p>
+            > UNAUTHORIZED USER DETECTED
+        </p>
+
+        <p class="red">
+
+            > TRACE INITIATED
+
+        </p>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================
+     SCREEN 4
+===================================== -->
+
+<section
+    id="screen4"
+    class="screen"
+>
+
+    <h1>
+
+        🔓 ACCESS GRANTED
+
+    </h1>
+
+
+    <p>
+
+        SECURITY LEVEL :
+        TOP SECRET
+
+    </p>
+
+
+    <div class="file">
+
+        SECRET_FILE_001.dat
+
+    </div>
+
+
+    <div class="file">
+
+        CLASSIFIED_DOCUMENT.txt
+
+    </div>
+
+
+    <div class="file">
+
+        DO_NOT_OPEN.zip
+
+    </div>
+
+
+    <p>
+
+        機密ファイルを復号しています...
+
+    </p>
+
+</section>
+
+
+
+<!-- =====================================
+     SCREEN 5
+===================================== -->
+
+<section
+    id="screen5"
+    class="screen"
+>
+
+    <div class="final">
+
+
+        <h1>
+
+            MISSION COMPLETE
+
+        </h1>
+
+
+        <div class="big">
+
+            何もありません。
+
+        </div>
+
+
+        <p>
+
+            あなたは極秘区域への<br>
+
+            アクセスに成功しました。
+
+        </p>
+
+
+        <p>
+
+            ……が、
+
+        </p>
+
+
+        <p>
+
+            本当に何もありません。
+
+        </p>
+
+
+        <div class="secret">
+
+            このサイトは位置情報などの<br>
+
+            個人情報を取得していません。
+
+        </div>
+
+    </div>
+
+</section>
+
+
+
+<!-- =====================================
+     2回目以降
+===================================== -->
+
+<section
+    id="secondVisit"
+    class="screen"
+>
+
+    <div class="warning">
+
+        YOU AGAIN?
+
+    </div>
+
+
+    <h1>
+
+        ……また来ましたね。
+
+    </h1>
+
+
+    <div class="terminal">
+
+        <p>
+
+            > PREVIOUS ACCESS :
+            DETECTED
+
+        </p>
+
+
+        <p>
+
+            > ACCESS COUNT :
+            <span id="visitCount">
+                2
+            </span>
+
+        </p>
+
+
+        <p>
+
+            > USER STATUS :
+            PERSISTENT
+
+        </p>
+
+    </div>
+
+
+    <p>
+
+        前回のアクセス記録が残っています。
+
+    </p>
+
+
+    <div class="big">
+
+        今度は少し違います。
+
+    </div>
+
+</section>
+
+
+</div>
+
+
+
+<script>
+
+/* =========================================
+   基本関数
+========================================= */
+
+const $ = (id) => {
+
+    return document.getElementById(id);
+
+};
+
+
+function show(id) {
+
+    document
+        .querySelectorAll(".screen")
+        .forEach(
+            el =>
+                el.classList.remove(
+                    "active"
+                )
+        );
+
+
+    $(id)
+        .classList.add(
+            "active"
+        );
+
+}
+
+
+
+/* =========================================
+   バイブレーション
+========================================= */
+
+function vibrate(pattern) {
+
+    if (
+        "vibrate"
+        in navigator
+    ) {
+
+        navigator.vibrate(
+            pattern
+        );
+
+    }
+
+}
+
+
+
+/* =========================================
+   アクセス回数
+========================================= */
+
+let visitCount =
+    Number(
+        localStorage.getItem(
+            "secretVisitCount"
+        ) || 0
+    );
+
+
+visitCount++;
+
+
+localStorage.setItem(
+
+    "secretVisitCount",
+
+    visitCount
+
+);
+
+
+
+/* =========================================
+   2回目以降
+========================================= */
+
+if (
+    visitCount >= 2
+) {
+
+
+    show(
+        "secondVisit"
+    );
+
+
+    $("visitCount")
+        .textContent =
+        visitCount;
+
+
+
+    /* 振動 */
+
+    setTimeout(
+        () => {
+
+            vibrate(
+                [
+                    150,
+                    100,
+                    150
+                ]
+            );
+
+        },
+
+        800
+
+    );
+
+
+
+    /* 赤フラッシュ */
+
+    setTimeout(
+        () => {
+
+            document
+                .body
+                .classList
+                .add(
+                    "flash-red"
+                );
+
+
+            vibrate(
+                [
+                    300,
+                    100,
+                    300
+                ]
+            );
+
+
+            setTimeout(
+                () => {
+
+                    document
+                        .body
+                        .classList
+                        .remove(
+                            "flash-red"
+                        );
+
+                },
+
+                800
+
+            );
+
+        },
+
+        2500
+
+    );
+
+
+
+}
+
+
+
+/* =========================================
+   初回アクセス
+========================================= */
+
+else {
+
+
+    let progress = 0;
+
+
+    const progressBar =
+        $("progress");
+
+
+
+    const loading =
+        setInterval(
+            () => {
+
+
+                progress +=
+                    Math.floor(
+                        Math.random() * 7
+                    ) + 2;
+
+
+
+                if (
+                    progress >= 100
+                ) {
+
+
+                    progress = 100;
+
+
+                    progressBar
+                        .style
+                        .width =
+                        progress
+                        + "%";
+
+
+                    clearInterval(
+                        loading
+                    );
+
+
+                    vibrate(
+                        [
+                            100,
+                            50,
+                            100
+                        ]
+                    );
+
+
+
+                    setTimeout(
+                        () => {
+
+                            show(
+                                "screen2"
+                            );
+
+
+                            fakeLocation();
+
+
+                            startCountdown();
+
+                        },
+
+                        900
+
+                    );
+
+
+
+                }
+
+                else {
+
+
+                    progressBar
+                        .style
+                        .width =
+                        progress
+                        + "%";
+
+                }
+
+
+            },
+
+            180
+
+        );
+
+}
+
+
+
+/* =========================================
+   偽位置情報
+========================================= */
+
+function fakeLocation() {
+
+
+    const text =
+        $("locationText");
+
+
+    const messages = [
+
+        "> LOCATION : SEARCHING...",
+
+        "> LOCATION : DETECTED",
+
+        "> LOCATION : ENCRYPTED",
+
+        "> LOCATION : CLASSIFIED"
+
+    ];
+
+
+    let i = 0;
+
+
+
+    const timer =
+        setInterval(
+            () => {
+
+
+                text.textContent =
+                    messages[i];
+
+
+                i++;
+
+
+                if (
+                    i >=
+                    messages.length
+                ) {
+
+                    clearInterval(
+                        timer
+                    );
+
+                }
+
+
+            },
+
+            700
+
+        );
+
+}
+
+
+
+/* =========================================
+   1/100秒カウントダウン
+========================================= */
+
 function startCountdown() {
-    const duration = 10 * 1000;
-    const startTime = performance.now();
-    const display = $('#countdown');
-    let popupTimer = null;
 
-    function spawnPopup() {
-        const msgs = ['⚠ WARNING', '⚠ INTRUSION', '⚠ TRACE', '⚠ UNAUTHORIZED'];
-        const div = document.createElement('div');
-        div.className = 'warning-popup';
-        div.textContent = msgs[Math.floor(Math.random() * msgs.length)];
-        document.body.appendChild(div);
-        beep(1200, 80);
-        setTimeout(() => div.remove(), 1300);
-    }
 
-    let popupCount = 0;
-    popupTimer = setInterval(() => {
-        if (popupCount < 10 && Math.random() < 0.4) {
-            spawnPopup();
-            popupCount++;
-        }
-    }, 600);
+    // 10秒
 
-    function updateCountdown(currentTime) {
-        const elapsed = currentTime - startTime;
-        const remaining = Math.max(0, duration - elapsed);
-        const seconds = (remaining / 1000).toFixed(2);
-        display.textContent = seconds;
-        const brightness = 0.4 + 0.6 * (remaining / duration);
-        document.body.style.filter = `brightness(${brightness})`;
+    const duration =
+        10 * 1000;
 
-        if (remaining <= 0) {
-            display.textContent = "0.00";
-            clearInterval(popupTimer);
-            document.body.style.filter = 'brightness(0.2)';
-            vibrate([200, 100, 200, 100, 500]);
-            beep(300, 400);
-            document.body.classList.add('flash-red');
-            setTimeout(() => {
-                document.body.classList.remove('flash-red');
-                show('screen3');
-                setTimeout(() => {
-                    show('screen4');
-                    vibrate(100);
-                    beep(1000, 150);
-                    setTimeout(() => crashAndFinal(), 2800);
-                }, 2600);
-            }, 700);
+
+
+    // 開始時間
+
+    const startTime =
+        performance.now();
+
+
+
+    const display =
+        $("countdown");
+
+
+
+    function updateCountdown(
+        currentTime
+    ) {
+
+
+        // 経過時間
+
+        const elapsed =
+            currentTime -
+            startTime;
+
+
+
+        // 残り時間
+
+        const remaining =
+            Math.max(
+                0,
+                duration -
+                elapsed
+            );
+
+
+
+        // 小数点以下2桁
+
+        const seconds =
+            (
+                remaining /
+                1000
+            ).toFixed(2);
+
+
+
+        display.textContent =
+            seconds;
+
+
+
+        /* =========================
+           0.00
+        ========================= */
+
+        if (
+            remaining <= 0
+        ) {
+
+
+            display.textContent =
+                "0.00";
+
+
+
+            /* 最終振動 */
+
+            vibrate(
+                [
+                    200,
+                    100,
+                    200,
+                    100,
+                    500
+                ]
+            );
+
+
+
+            /* 赤フラッシュ */
+
+            document
+                .body
+                .classList
+                .add(
+                    "flash-red"
+                );
+
+
+
+            setTimeout(
+                () => {
+
+                    document
+                        .body
+                        .classList
+                        .remove(
+                            "flash-red"
+                        );
+
+
+                    show(
+                        "screen3"
+                    );
+
+                },
+
+                700
+
+            );
+
+
+
+            /* INTRUDER */
+
+            setTimeout(
+                () => {
+
+                    show(
+                        "screen4"
+                    );
+
+
+                    vibrate(
+                        100
+                    );
+
+                },
+
+                2600
+
+            );
+
+
+
+            /* 最終オチ */
+
+            setTimeout(
+                () => {
+
+                    show(
+                        "screen5"
+                    );
+
+                },
+
+                6500
+
+            );
+
+
+
             return;
+
         }
-        requestAnimationFrame(updateCountdown);
+
+
+
+        /* 次のフレーム */
+
+        requestAnimationFrame(
+            updateCountdown
+        );
+
     }
-    requestAnimationFrame(updateCountdown);
-    fakeLocation();
+
+
+
+    requestAnimationFrame(
+        updateCountdown
+    );
+
 }
 
-/* =========================================
-   クラッシュ→最終
-========================================= */
-function crashAndFinal() {
-    const crash = document.getElementById('crashScreen');
-    crash.classList.add('show');
-    document.body.style.filter = 'brightness(1.5)';
-    vibrate([50, 50, 50, 50, 200, 100, 300]);
-    beep(150, 600);
-    document.body.classList.add('flash-crash');
-    setTimeout(() => {
-        document.body.classList.remove('flash-crash');
-        crash.classList.remove('show');
-        document.body.style.filter = 'brightness(1)';
-        show('screen5');
-        vibrate(200);
-        beep(880, 200);
-    }, 1800);
-}
-
-/* =========================================
-   ★ メイン起動 (プログレスバーから始める)
-========================================= */
-// 最初は必ず screen1 を表示
-show('screen1');
-
-// プログレスバーを実行
-runProgressBar(() => {
-    // プログレスバー完了後、分岐
-    if (visitCount >= 2) {
-        // 2回目以降：第二画面へ
-        document.getElementById('visitCount').textContent = visitCount;
-        document.getElementById('lastVisit').textContent = prevDate;
-        show('secondVisit');
-        setTimeout(() => vibrate([150, 100, 150]), 300);
-        setTimeout(() => {
-            document.body.classList.add('flash-red');
-            vibrate([300, 100, 300]);
-            setTimeout(() => document.body.classList.remove('flash-red'), 800);
-        }, 2000);
-    } else {
-        // 初回：カウントダウンへ
-        show('screen2');
-        fakeInfo();
-        startCountdown();
-    }
-});
 </script>
+
+
 </body>
+
 </html>
