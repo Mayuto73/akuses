@@ -8,14 +8,10 @@
 /* =========================================
    基本設定
 ========================================= */
-* {
-    box-sizing: border-box;
-}
+* { box-sizing: border-box; }
 html, body {
-    margin: 0;
-    padding: 0;
-    width: 100%;
-    height: 100%;
+    margin: 0; padding: 0;
+    width: 100%; height: 100%;
     background: #030303;
     color: #00ff66;
     font-family: "Courier New", monospace;
@@ -43,18 +39,13 @@ body {
 /* マトリックス背景キャンバス */
 #matrixCanvas {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     z-index: 0;
-    opacity: 0.25;
+    opacity: 0.2;
     pointer-events: none;
 }
 
-/* =========================================
-   画面
-========================================= */
 .screen {
     width: 100%;
     text-align: center;
@@ -67,13 +58,10 @@ body {
     animation: fadeIn 0.4s ease;
 }
 
-/* =========================================
-   警告ポップアップ（カウントダウン中）
-========================================= */
+/* 警告ポップアップ */
 .warning-popup {
     position: fixed;
-    top: 50%;
-    left: 50%;
+    top: 50%; left: 50%;
     transform: translate(-50%, -50%);
     color: #ff3030;
     font-size: clamp(32px, 10vw, 60px);
@@ -91,9 +79,6 @@ body {
     100% { opacity: 0; transform: translate(-50%, -50%) scale(1) translateY(-30px); }
 }
 
-/* =========================================
-   警告
-========================================= */
 .warning {
     color: #ff3030;
     font-size: clamp(24px, 7vw, 42px);
@@ -102,10 +87,6 @@ body {
     margin-bottom: 25px;
     animation: blink 1s infinite;
 }
-
-/* =========================================
-   見出し
-========================================= */
 h1 {
     font-size: clamp(21px, 6vw, 34px);
     line-height: 1.6;
@@ -115,10 +96,6 @@ p {
     font-size: 14px;
     line-height: 1.8;
 }
-
-/* =========================================
-   ターミナル
-========================================= */
 .terminal {
     margin-top: 25px;
     padding: 18px;
@@ -131,10 +108,6 @@ p {
     margin: 6px 0;
     font-size: 12px;
 }
-
-/* =========================================
-   プログレスバー
-========================================= */
 .progress-container {
     width: 100%;
     height: 17px;
@@ -146,12 +119,8 @@ p {
     height: 100%;
     width: 0%;
     background: #00ff66;
-    transition: width 0.15s;
+    transition: width 0.08s ease;
 }
-
-/* =========================================
-   カウントダウン
-========================================= */
 .countdown {
     font-size: clamp(70px, 22vw, 130px);
     font-weight: bold;
@@ -161,10 +130,6 @@ p {
     text-shadow: 0 0 10px #00ff66, 0 0 30px #00ff66;
     font-variant-numeric: tabular-nums;
 }
-
-/* =========================================
-   ファイル
-========================================= */
 .file {
     margin: 15px 0;
     padding: 15px;
@@ -178,10 +143,6 @@ p {
     content: "▣ ";
     color: #00ff66;
 }
-
-/* =========================================
-   最終画面
-========================================= */
 .final {
     color: white;
     font-family: Arial, sans-serif;
@@ -199,35 +160,11 @@ p {
     color: #777;
     font-size: 11px;
 }
+.red { color: #ff3030; }
+.glitch { animation: glitch 0.12s infinite; }
+.flash-red { animation: redFlash 0.15s 5; }
+.flash-crash { animation: redFlash 0.08s 10; }
 
-/* =========================================
-   赤文字
-========================================= */
-.red {
-    color: #ff3030;
-}
-
-/* =========================================
-   グリッチ
-========================================= */
-.glitch {
-    animation: glitch 0.12s infinite;
-}
-
-/* =========================================
-   赤フラッシュ
-========================================= */
-.flash-red {
-    animation: redFlash 0.15s 5;
-}
-/* クラッシュフラッシュ */
-.flash-crash {
-    animation: redFlash 0.08s 10;
-}
-
-/* =========================================
-   アニメーション
-========================================= */
 @keyframes fadeIn {
     from { opacity: 0; transform: translateY(10px); }
     to { opacity: 1; transform: translateY(0); }
@@ -247,16 +184,10 @@ p {
     0%,100% { background: #030303; }
     50% { background: #550000; }
 }
-
-/* =========================================
-   戻るボタンガード用オーバーレイ
-========================================= */
 #backGuard {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     background: rgba(0,0,0,0.85);
     color: #ff3030;
     display: none;
@@ -268,20 +199,11 @@ p {
     padding: 30px;
     backdrop-filter: blur(6px);
 }
-#backGuard.show {
-    display: flex;
-    animation: fadeIn 0.2s ease;
-}
-
-/* =========================================
-   クラッシュ画面
-========================================= */
+#backGuard.show { display: flex; animation: fadeIn 0.2s ease; }
 #crashScreen {
     position: fixed;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
+    top: 0; left: 0;
+    width: 100%; height: 100%;
     background: #000;
     display: none;
     justify-content: center;
@@ -293,10 +215,7 @@ p {
     flex-direction: column;
     text-shadow: 0 0 40px #ff0000;
 }
-#crashScreen.show {
-    display: flex;
-    animation: fadeIn 0.1s ease;
-}
+#crashScreen.show { display: flex; animation: fadeIn 0.1s ease; }
 #crashScreen .sub {
     font-size: 16px;
     color: #ff6666;
@@ -306,16 +225,13 @@ p {
 </head>
 <body>
 
-<!-- マトリックス背景 -->
 <canvas id="matrixCanvas"></canvas>
 
-<!-- 戻るボタンガード -->
 <div id="backGuard">
     ⛔ 戻ることはできません。<br>
     <span style="font-size:16px;color:#888;">セッションは固定されています。</span>
 </div>
 
-<!-- クラッシュ画面 -->
 <div id="crashScreen">
     ⚡ SYSTEM CRASH<br>
     <span class="sub">再起動中...</span>
@@ -323,9 +239,7 @@ p {
 
 <div id="app">
 
-<!-- =====================================
-     初回：SCREEN 1
-===================================== -->
+<!-- SCREEN 1 (プログレスバー) -->
 <section id="screen1" class="screen active">
     <div class="warning">⚠ ACCESS DETECTED</div>
     <h1>極秘区域へのアクセスが<br>検知されました。</h1>
@@ -341,9 +255,7 @@ p {
     </div>
 </section>
 
-<!-- =====================================
-     SCREEN 2
-===================================== -->
+<!-- SCREEN 2 (カウントダウン) -->
 <section id="screen2" class="screen">
     <div class="warning">⚠ WARNING</div>
     <h1>機密区域へのアクセスを<br>確認しています。</h1>
@@ -359,9 +271,7 @@ p {
     <div class="countdown" id="countdown">10.00</div>
 </section>
 
-<!-- =====================================
-     SCREEN 3
-===================================== -->
+<!-- SCREEN 3 -->
 <section id="screen3" class="screen">
     <div class="warning">INTRUDER DETECTED</div>
     <h1 class="glitch">⚠ ACCESS VIOLATION</h1>
@@ -372,9 +282,7 @@ p {
     </div>
 </section>
 
-<!-- =====================================
-     SCREEN 4
-===================================== -->
+<!-- SCREEN 4 -->
 <section id="screen4" class="screen">
     <h1>🔓 ACCESS GRANTED</h1>
     <p>SECURITY LEVEL : TOP SECRET</p>
@@ -384,9 +292,7 @@ p {
     <p>機密ファイルを復号しています...</p>
 </section>
 
-<!-- =====================================
-     SCREEN 5
-===================================== -->
+<!-- SCREEN 5 (オチ) -->
 <section id="screen5" class="screen">
     <div class="final">
         <h1>MISSION COMPLETE</h1>
@@ -398,9 +304,7 @@ p {
     </div>
 </section>
 
-<!-- =====================================
-     2回目以降
-===================================== -->
+<!-- 2回目以降用 -->
 <section id="secondVisit" class="screen">
     <div class="warning">YOU AGAIN?</div>
     <h1>……また来ましたね。</h1>
@@ -418,7 +322,7 @@ p {
 
 <script>
 /* =========================================
-   基本関数
+   共通ユーティリティ
 ========================================= */
 const $ = id => document.getElementById(id);
 function show(id) {
@@ -445,45 +349,23 @@ function beep(freq = 800, dur = 120) {
 }
 
 /* =========================================
-   マトリックス背景 (Canvas)
+   ローカルストレージ（エラーハンドリング付き）
 ========================================= */
-const canvas = document.getElementById('matrixCanvas');
-const ctx = canvas.getContext('2d');
-let w, h, columns, drops, matrixChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789あいうえおカキクケコ';
-function resizeMatrix() {
-    w = canvas.width = window.innerWidth;
-    h = canvas.height = window.innerHeight;
-    columns = Math.floor(w / 18);
-    drops = Array(columns).fill(1);
+function getStorage(key, def) {
+    try {
+        const val = localStorage.getItem(key);
+        return val !== null ? val : def;
+    } catch(e) { return def; }
 }
-resizeMatrix();
-window.addEventListener('resize', resizeMatrix);
-
-function drawMatrix() {
-    ctx.fillStyle = 'rgba(3, 3, 3, 0.05)';
-    ctx.fillRect(0, 0, w, h);
-    ctx.fillStyle = '#00ff66';
-    ctx.font = '16px monospace';
-    for (let i = 0; i < drops.length; i++) {
-        const text = matrixChars[Math.floor(Math.random() * matrixChars.length)];
-        ctx.fillText(text, i * 18, drops[i] * 18);
-        if (drops[i] * 18 > h && Math.random() > 0.975) {
-            drops[i] = 0;
-        }
-        drops[i]++;
-    }
-    requestAnimationFrame(drawMatrix);
+function setStorage(key, val) {
+    try { localStorage.setItem(key, val); } catch(e) {}
 }
-drawMatrix();
 
-/* =========================================
-   アクセス回数 / 前回日時
-========================================= */
-let visitCount = Number(localStorage.getItem('secretVisitCount') || 0);
+let visitCount = Number(getStorage('secretVisitCount', '0')) || 0;
 visitCount++;
-const prevDate = localStorage.getItem('secretLastVisit') || '--';
-localStorage.setItem('secretVisitCount', visitCount);
-localStorage.setItem('secretLastVisit', new Date().toLocaleString('ja-JP'));
+const prevDate = getStorage('secretLastVisit', '--');
+setStorage('secretVisitCount', String(visitCount));
+setStorage('secretLastVisit', new Date().toLocaleString('ja-JP'));
 
 /* =========================================
    戻るボタンガード
@@ -500,44 +382,67 @@ window.addEventListener('popstate', function(e) {
 });
 
 /* =========================================
-   2回目以降の処理
+   マトリックス背景 (Canvas)
 ========================================= */
-if (visitCount >= 2) {
-    show('secondVisit');
-    document.getElementById('visitCount').textContent = visitCount;
-    document.getElementById('lastVisit').textContent = prevDate;
-    setTimeout(() => vibrate([150, 100, 150]), 800);
-    setTimeout(() => {
-        document.body.classList.add('flash-red');
-        vibrate([300, 100, 300]);
-        setTimeout(() => document.body.classList.remove('flash-red'), 800);
-    }, 2500);
-    // 2回目以降もマトリックスは動き続ける
-} else {
-    // 初回: プログレスバー
+const canvas = document.getElementById('matrixCanvas');
+const ctx = canvas.getContext('2d');
+let w, h, columns, drops, matrixChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+function resizeMatrix() {
+    w = canvas.width = window.innerWidth;
+    h = canvas.height = window.innerHeight;
+    columns = Math.floor(w / 18);
+    drops = Array(columns).fill(1);
+}
+resizeMatrix();
+window.addEventListener('resize', resizeMatrix);
+function drawMatrix() {
+    ctx.fillStyle = 'rgba(3, 3, 3, 0.05)';
+    ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = '#00ff66';
+    ctx.font = '16px monospace';
+    for (let i = 0; i < drops.length; i++) {
+        const text = matrixChars[Math.floor(Math.random() * matrixChars.length)];
+        ctx.fillText(text, i * 18, drops[i] * 18);
+        if (drops[i] * 18 > h && Math.random() > 0.975) drops[i] = 0;
+        drops[i]++;
+    }
+    requestAnimationFrame(drawMatrix);
+}
+drawMatrix();
+
+/* =========================================
+   プログレスバー（必ず動く！）
+========================================= */
+function runProgressBar(onComplete) {
     let progress = 0;
-    const progressBar = $('#progress');
-    const loading = setInterval(() => {
-        progress += Math.floor(Math.random() * 7) + 2;
+    const bar = $('#progress');
+    // ★ 2回目以降は 50% からスタート（すぐ終わる）
+    if (visitCount >= 2) progress = 50;
+    bar.style.width = progress + '%';
+
+    // 速度：初回はゆっくり(2〜9)、2回目以降は速い(15〜30)
+    const isFirst = visitCount === 1;
+    const intervalTime = isFirst ? 120 : 60;
+
+    const timer = setInterval(() => {
+        const maxAdd = isFirst ? 9 : 30;
+        const minAdd = isFirst ? 2 : 15;
+        progress += Math.floor(Math.random() * (maxAdd - minAdd + 1)) + minAdd;
         if (progress >= 100) {
             progress = 100;
-            progressBar.style.width = progress + '%';
-            clearInterval(loading);
+            bar.style.width = progress + '%';
+            clearInterval(timer);
             vibrate([100, 50, 100]);
             beep(600, 100);
-            setTimeout(() => {
-                show('screen2');
-                fakeInfo();
-                startCountdown();
-            }, 900);
+            if (onComplete) onComplete();
         } else {
-            progressBar.style.width = progress + '%';
+            bar.style.width = progress + '%';
         }
-    }, 180);
+    }, intervalTime);
 }
 
 /* =========================================
-   フェイク情報（バッテリー・シグナル）
+   フェイク情報
 ========================================= */
 function fakeInfo() {
     const batt = $('#batteryText');
@@ -552,9 +457,6 @@ function fakeInfo() {
     }, 2000);
 }
 
-/* =========================================
-   偽位置情報
-========================================= */
 function fakeLocation() {
     const text = $('#locationText');
     const messages = [
@@ -572,7 +474,7 @@ function fakeLocation() {
 }
 
 /* =========================================
-   カウントダウン + 警告ポップアップ + 暗くなる
+   カウントダウン
 ========================================= */
 function startCountdown() {
     const duration = 10 * 1000;
@@ -590,7 +492,6 @@ function startCountdown() {
         setTimeout(() => div.remove(), 1300);
     }
 
-    // ランダムポップアップ（最初の3秒間だけ多め）
     let popupCount = 0;
     popupTimer = setInterval(() => {
         if (popupCount < 10 && Math.random() < 0.4) {
@@ -604,8 +505,6 @@ function startCountdown() {
         const remaining = Math.max(0, duration - elapsed);
         const seconds = (remaining / 1000).toFixed(2);
         display.textContent = seconds;
-
-        // 画面の明るさを徐々に暗く (残り時間が少なくなるほど暗く)
         const brightness = 0.4 + 0.6 * (remaining / duration);
         document.body.style.filter = `brightness(${brightness})`;
 
@@ -619,12 +518,10 @@ function startCountdown() {
             setTimeout(() => {
                 document.body.classList.remove('flash-red');
                 show('screen3');
-                // 少ししてスクリーン4
                 setTimeout(() => {
                     show('screen4');
                     vibrate(100);
                     beep(1000, 150);
-                    // クラッシュ演出を挟んで最終へ
                     setTimeout(() => crashAndFinal(), 2800);
                 }, 2600);
             }, 700);
@@ -633,13 +530,11 @@ function startCountdown() {
         requestAnimationFrame(updateCountdown);
     }
     requestAnimationFrame(updateCountdown);
-
-    // 位置情報も開始
     fakeLocation();
 }
 
 /* =========================================
-   クラッシュ演出 → 最終画面
+   クラッシュ→最終
 ========================================= */
 function crashAndFinal() {
     const crash = document.getElementById('crashScreen');
@@ -657,6 +552,34 @@ function crashAndFinal() {
         beep(880, 200);
     }, 1800);
 }
+
+/* =========================================
+   ★ メイン起動 (プログレスバーから始める)
+========================================= */
+// 最初は必ず screen1 を表示
+show('screen1');
+
+// プログレスバーを実行
+runProgressBar(() => {
+    // プログレスバー完了後、分岐
+    if (visitCount >= 2) {
+        // 2回目以降：第二画面へ
+        document.getElementById('visitCount').textContent = visitCount;
+        document.getElementById('lastVisit').textContent = prevDate;
+        show('secondVisit');
+        setTimeout(() => vibrate([150, 100, 150]), 300);
+        setTimeout(() => {
+            document.body.classList.add('flash-red');
+            vibrate([300, 100, 300]);
+            setTimeout(() => document.body.classList.remove('flash-red'), 800);
+        }, 2000);
+    } else {
+        // 初回：カウントダウンへ
+        show('screen2');
+        fakeInfo();
+        startCountdown();
+    }
+});
 </script>
 </body>
 </html>
