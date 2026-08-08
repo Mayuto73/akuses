@@ -1,82 +1,399 @@
-/* ==================================
-   1/100秒カウントダウン
-================================== */
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-function startCountdown() {
+<title>SECURE ACCESS</title>
 
-    // 10秒スタート
-    const duration = 10 * 1000;
-
-    // 開始時刻
-    const startTime = performance.now();
-
-    const display = $("countdown");
-
-    function updateCountdown(currentTime) {
-
-        // 経過時間
-        const elapsed = currentTime - startTime;
-
-        // 残り時間
-        const remaining = Math.max(
-            0,
-            duration - elapsed
-        );
-
-        // 秒に変換して小数点以下2桁
-        const seconds = (remaining / 1000).toFixed(2);
-
-        display.textContent = seconds;
-
-        // 0.00になったら終了
-        if (remaining <= 0) {
-
-            // 最後の振動
-            vibrate([
-                200,
-                100,
-                200,
-                100,
-                500
-            ]);
-
-            // 赤フラッシュ
-            document.body.classList.add("flash-red");
-
-            setTimeout(() => {
-
-                document.body.classList.remove(
-                    "flash-red"
-                );
-
-                show("screen3");
-
-            }, 700);
-
-
-            // INTRUDER画面
-            setTimeout(() => {
-
-                show("screen4");
-
-                vibrate(100);
-
-            }, 2600);
-
-
-            // 最終オチ
-            setTimeout(() => {
-
-                show("screen5");
-
-            }, 6500);
-
-            return;
-        }
-
-        // 次のフレームで更新
-        requestAnimationFrame(updateCountdown);
+<style>
+    * {
+        box-sizing: border-box;
     }
 
-    requestAnimationFrame(updateCountdown);
-}
+    html, body {
+        margin: 0;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        background: #050505;
+        color: #00ff66;
+        font-family: "Courier New", monospace;
+        overflow: hidden;
+    }
+
+    body {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    #app {
+        width: 100%;
+        max-width: 600px;
+        height: 100%;
+        padding: 30px 22px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .screen {
+        width: 100%;
+        text-align: center;
+        display: none;
+    }
+
+    .screen.active {
+        display: block;
+        animation: fadeIn 0.5s ease;
+    }
+
+    .warning {
+        color: #ff3030;
+        font-size: clamp(24px, 7vw, 42px);
+        font-weight: bold;
+        letter-spacing: 3px;
+        margin-bottom: 30px;
+        animation: blink 1s infinite;
+    }
+
+    h1 {
+        font-size: clamp(22px, 6vw, 34px);
+        margin-bottom: 30px;
+    }
+
+    p {
+        color: #b8ffc9;
+        line-height: 1.8;
+        font-size: 15px;
+    }
+
+    .terminal {
+        margin-top: 30px;
+        text-align: left;
+        background: #001508;
+        border: 1px solid #00ff66;
+        padding: 18px;
+        min-height: 150px;
+        box-shadow: 0 0 20px rgba(0,255,102,.15);
+    }
+
+    .terminal p {
+        margin: 5px 0;
+        font-size: 13px;
+    }
+
+    .progress-container {
+        margin-top: 25px;
+        width: 100%;
+        height: 18px;
+        border: 1px solid #00ff66;
+        padding: 3px;
+    }
+
+    #progress {
+        width: 0%;
+        height: 100%;
+        background: #00ff66;
+        transition: width .2s;
+    }
+
+    .countdown {
+        font-size: clamp(80px, 25vw, 150px);
+        font-weight: bold;
+        margin: 20px 0;
+        text-shadow: 0 0 20px #00ff66;
+    }
+
+    .loading {
+        color: #888;
+        margin-top: 25px;
+    }
+
+    .final-title {
+        font-size: clamp(28px, 9vw, 55px);
+        color: #00ff66;
+        margin-bottom: 35px;
+        text-shadow: 0 0 15px #00ff66;
+    }
+
+    .nothing {
+        color: white;
+        font-family: sans-serif;
+        font-size: clamp(20px, 6vw, 30px);
+        margin: 50px 0;
+    }
+
+    .small {
+        color: #555;
+        font-size: 11px;
+        margin-top: 60px;
+    }
+
+    .access {
+        display: inline-block;
+        padding: 10px 18px;
+        border: 1px solid #00ff66;
+        margin-top: 20px;
+        font-size: 12px;
+    }
+
+    @keyframes blink {
+        0%, 45% {
+            opacity: 1;
+        }
+        50%, 100% {
+            opacity: .3;
+        }
+    }
+
+    @keyframes fadeIn {
+        from {
+            opacity: 0;
+            transform: translateY(10px);
+        }
+
+        to {
+            opacity: 1;
+            transform: translateY(0);
+        }
+    }
+
+    @keyframes glitch {
+        0% {
+            transform: translate(0);
+        }
+
+        20% {
+            transform: translate(-2px, 2px);
+        }
+
+        40% {
+            transform: translate(2px, -2px);
+        }
+
+        60% {
+            transform: translate(-1px, 1px);
+        }
+
+        100% {
+            transform: translate(0);
+        }
+    }
+
+    .glitch {
+        animation: glitch .15s infinite;
+    }
+</style>
+</head>
+
+<body>
+
+<div id="app">
+
+    <!-- SCREEN 1 -->
+    <section id="screen1" class="screen active">
+
+        <div class="warning">
+            ⚠ ACCESS DETECTED
+        </div>
+
+        <h1>極秘区域へのアクセスが<br>検知されました。</h1>
+
+        <p>
+            あなたの端末から<br>
+            未承認のアクセスを確認しました。
+        </p>
+
+        <div class="terminal">
+            <p>> SYSTEM INITIALIZING...</p>
+            <p>> CONNECTION ESTABLISHED</p>
+            <p>> SECURITY LEVEL: UNKNOWN</p>
+            <p>> ANALYZING USER...</p>
+
+            <div class="progress-container">
+                <div id="progress"></div>
+            </div>
+        </div>
+
+    </section>
+
+
+    <!-- SCREEN 2 -->
+    <section id="screen2" class="screen">
+
+        <div class="warning">
+            ⚠ WARNING
+        </div>
+
+        <h1>
+            この先の情報は<br>
+            機密指定されています。
+        </h1>
+
+        <p>
+            Unauthorized access detected.
+        </p>
+
+        <div class="countdown" id="countdown">
+            10
+        </div>
+
+        <p>
+            ACCESS SEQUENCE STARTING...
+        </p>
+
+    </section>
+
+
+    <!-- SCREEN 3 -->
+    <section id="screen3" class="screen">
+
+        <h1 class="glitch">
+            🔓 ACCESS GRANTED
+        </h1>
+
+        <div class="access">
+            SECURITY LEVEL : TOP SECRET
+        </div>
+
+        <p>
+            Welcome, unauthorized user.
+        </p>
+
+        <div class="terminal">
+            <p>> ACCESSING SECRET FILE...</p>
+            <p>> DECRYPTING...</p>
+            <p>> DECRYPTION COMPLETE</p>
+            <p>> OPENING FILE...</p>
+        </div>
+
+    </section>
+
+
+    <!-- SCREEN 4 -->
+    <section id="screen4" class="screen">
+
+        <div class="final-title">
+            MISSION COMPLETE
+        </div>
+
+        <div class="nothing">
+            何もありません。
+        </div>
+
+        <p>
+            あなたは極秘区域にアクセスしました。
+        </p>
+
+        <p>
+            ……が、
+        </p>
+
+        <p>
+            本当に何もありません。
+        </p>
+
+        <div class="small">
+            ※このサイトには本当に何もありません。<br>
+            ※立入禁止区域への侵入は自己責任ではありません。<br>
+            ※そもそも侵入していません。
+        </div>
+
+    </section>
+
+</div>
+
+
+<script>
+
+    // 画面切り替え
+    function showScreen(number) {
+
+        document.querySelectorAll(".screen").forEach(screen => {
+            screen.classList.remove("active");
+        });
+
+        document
+            .getElementById("screen" + number)
+            .classList.add("active");
+    }
+
+
+    // -----------------------------
+    // 1. アクセス解析っぽい演出
+    // -----------------------------
+
+    let progress = 0;
+
+    const progressBar = document.getElementById("progress");
+
+    const loading = setInterval(() => {
+
+        progress += Math.floor(Math.random() * 8) + 2;
+
+        if (progress >= 100) {
+
+            progress = 100;
+
+            progressBar.style.width = progress + "%";
+
+            clearInterval(loading);
+
+            setTimeout(() => {
+                showScreen(2);
+                startCountdown();
+            }, 1000);
+
+        } else {
+
+            progressBar.style.width = progress + "%";
+
+        }
+
+    }, 250);
+
+
+    // -----------------------------
+    // 2. カウントダウン
+    // -----------------------------
+
+    function startCountdown() {
+
+        let count = 10;
+
+        const countdown = document.getElementById("countdown");
+
+        countdown.textContent = count;
+
+        const timer = setInterval(() => {
+
+            count--;
+
+            countdown.textContent = count;
+
+            if (count <= 0) {
+
+                clearInterval(timer);
+
+                setTimeout(() => {
+
+                    showScreen(3);
+
+                    setTimeout(() => {
+                        showScreen(4);
+                    }, 3500);
+
+                }, 800);
+
+            }
+
+        }, 1000);
+
+    }
+
+</script>
+
+</body>
+</html>
